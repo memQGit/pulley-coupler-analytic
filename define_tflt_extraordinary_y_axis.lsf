@@ -1,0 +1,42 @@
+# set LT dispersion data
+mat_name = "TFLT_extraordinary_y_axis";
+
+if (materialexists(mat_name)) {
+    deletematerial(mat_name);
+}
+
+# dispersion data from doi:10.1063/1.1703106
+lambda = c/(1e-6*[0.45, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.20, 1.40, 1.60, 1.80, 
+          2.00, 2.20, 2.40, 2.60, 2.80, 3.00, 3.20, 3.40, 3.60, 3.80, 4.00]);
+          
+ne = [2.2468, 2.2205, 2.1878, 2.1696, 2.1578, 2.1493, 2.1432, 2.1341, 2.1273, 
+      2.1213, 2.1170, 2.1115, 2.1053, 2.0993, 2.0936, 2.0871, 2.0799, 2.0727, 
+      2.0649, 2.0561, 2.0473, 2.0377];
+      
+eps_e = ne^2;
+
+no = [2.2420, 2.2160, 2.1834, 2.1652, 2.1538, 2.1454, 2.1391, 2.1305,
+      2.1236, 2.1174, 2.1120, 2.1066, 2.1009, 2.0951, 2.0891, 2.0825,
+      2.0755, 2.0680, 2.0601, 2.0513, 2.0424, 2.0335];
+      
+eps_o = no^2;
+      
+# extinction coeff (0 means lossless)
+ke = zeros(length(lambda));
+ko = zeros(length(lambda));
+
+# build sampled data matrix
+data = matrix(length(lambda),4);
+data(:,1) = lambda;
+data(:,2) = eps_o;
+data(:,3) = eps_e;
+data(:,4) = eps_o;
+
+# create the material
+lt_ey_mat = addmaterial("Sampled data");
+setmaterial(lt_ey_mat, "name", mat_name);
+setmaterial(mat_name, "Anisotropy", 1);
+#setmaterial(mat_name, "interpolation","linear");
+
+# assign data
+setmaterial(mat_name, "sampled data", data);
